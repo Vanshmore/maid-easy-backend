@@ -1,9 +1,10 @@
+import mongoose, {Schema} from "mongoose";
+// import jwt from "jsonwebtoken"
+import bcryptjs from "bcryptjs"
 
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
 
 const customerSchema = new mongoose.Schema({
-  name: {
+  fullName: {
     type: String,
     required: true,
     trim: true,
@@ -49,21 +50,19 @@ customerSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
     next();
   }
-
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  const salt = await bcryptjs.genSalt(10);
+  this.password = await bcryptjs.hash(this.password, salt);
 });
 
 customerSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+  return await bcryptjs.compare(enteredPassword, this.password);
 };
 
-userSchema.methods.generateAccessToken = function(){
+customerSchema.methods.generateAccessToken = function(){
   return jwt.sign(
       {
           _id: this._id,
           email: this.email,
-          username: this.username,
           fullName: this.fullName
       },
       process.env.ACCESS_TOKEN_SECRET,
@@ -72,11 +71,10 @@ userSchema.methods.generateAccessToken = function(){
       }
   )
 }
-userSchema.methods.generateRefreshToken = function(){
+customerSchema.methods.generateRefreshToken = function(){
   return jwt.sign(
       {
-          _id: this._id,
-          
+          _id: this._id,    
       },
       process.env.REFRESH_TOKEN_SECRET,
       {
@@ -85,5 +83,5 @@ userSchema.methods.generateRefreshToken = function(){
   )
 }
 
-const Customer = mongoose.model('Customer', customerSchema);
-module.exports = Customer;
+
+export const Customer = mongoose.model("Customer", customerSchema)
