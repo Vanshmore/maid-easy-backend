@@ -1,6 +1,6 @@
-
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+import mongoose, {Schema} from "mongoose";
+// import jwt from "jsonwebtoken"
+import bcryptjs from "bcryptjs"
 
 const maidSchema = new mongoose.Schema({
   name: {
@@ -8,18 +8,11 @@ const maidSchema = new mongoose.Schema({
     required: true,
     trim: true,
   },
-  email: {
-    type: String, 
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true,
-  },
-  password: {
+  phone: {
     type: String,
     required: true,
   },
-  phone: {
+  password: {
     type: String,
     required: true,
   },
@@ -29,12 +22,12 @@ const maidSchema = new mongoose.Schema({
   },
   aadhaarNumber: {
     type: String,
-    required: true,
+    // required: true,
     unique: true,
   },
   workExperience: {
     type: Number,
-    required: true,
+    // required: true,
   },
   verified: {
     type: Boolean,
@@ -63,13 +56,40 @@ maidSchema.pre('save', async function (next) {
     next();
   }
 
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  const salt = await bcryptjs.genSalt(10);
+  this.password = await bcryptjs.hash(this.password, salt);
 });
 
 
 maidSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
+  return await bcryptjs.compare(enteredPassword, this.password);
 };
-const Maid = mongoose.model('Maid', maidSchema);
-module.exports = Maid;
+
+maidSchema.methods.generateAccessToken = function(){
+  return jwt.sign(
+      {
+          _id: this._id,
+          fullName: this.fullName
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+          expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+      }
+  )
+}
+maidSchema.methods.generateRefreshToken = function(){
+  return jwt.sign(
+      {
+          _id: this._id,    
+      },
+      process.env.REFRESH_TOKEN_SECRET,
+      {
+          expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+      }
+  )
+}
+
+
+
+
+export const Maid = mongoose.model("Maid", maidSchema)
