@@ -1,26 +1,21 @@
-
-
-
 import mongoose from "mongoose";
 
 const customerSchema = new mongoose.Schema({
+  googleId: {
+    type: String,
+    required: true,
+    unique: true, // Unique Google ID for each user
+  },
   fullName: {
     type: String,
     required: true,
     trim: true,
   },
-  phone: {
+  email: {
     type: String,
     required: true,
-    unique: true,
-  },
-  otp: {
-    type: String,
-    default: null, // Store OTP for verification
-  },
-  isVerified: {
-    type: Boolean,
-    default: false, // Flag to indicate if OTP was verified
+    unique: true, // Ensure email is unique for identification
+    trim: true,
   },
   location: {
     type: String,
@@ -32,13 +27,14 @@ const customerSchema = new mongoose.Schema({
   },
 });
 
-// Token generation for authenticated user after OTP verification
+// Token generation for authenticated user
 customerSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,
       fullName: this.fullName,
-      phone: this.phone,
+      email: this.email,
+      googleId: this.googleId, // Include Google ID in token for identification
     },
     process.env.ACCESS_TOKEN_SECRET,
     {

@@ -1,14 +1,18 @@
+import mongoose from "mongoose";
 
-const mongoose = require('mongoose');
-
-const serviceCategorySchema = new mongoose.Schema({
+const serviceSchema = new mongoose.Schema({
+  id: {
+    type: Number,
+    required: true,
+    unique: true, // Ensures each service has a unique ID
+  },
   name: {
     type: String,
-    required: true,
-    unique: true,
+    required: true, // Name of the parent service
   },
   description: {
     type: String,
+    required: true, // Single string containing subservices
   },
   createdAt: {
     type: Date,
@@ -16,5 +20,4 @@ const serviceCategorySchema = new mongoose.Schema({
   },
 });
 
-const ServiceCategory = mongoose.model('ServiceCategory', serviceCategorySchema);
-module.exports = ServiceCategory;
+export const Service = mongoose.model("Service", serviceSchema);
