@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const jobSchema = new mongoose.Schema({
   customerId: {
@@ -12,15 +12,21 @@ const jobSchema = new mongoose.Schema({
     required: true,
   },
   dates: {
-    type: [Date], // Allows selecting one or more dates
-    required: true,
+    from: {
+      type: Date,
+      required: true,
+    },
+    to: {
+      type: Date,
+      required: true,
+    },
   },
   time: {
-    type: String, // The time selected by the user
+    type: String,
     required: true,
   },
   note: {
-    type: String, // Optional note
+    type: String,
   },
   createdAt: {
     type: Date,

@@ -17,10 +17,10 @@ app.use(cookieParser())
 
 //routes import
 import userRouter from './routes/customer.routes.js'
-import maidRouter from './routes/maid.routes.js'
+// import maidRouter from './routes/maid.routes.js'
 // routes declaration
 app.use("/api/v1/customer", userRouter)
-app.use("/api/v1/maid", maidRouter)
+// app.use("/api/v1/maid", maidRouter)
 
 
 export { app }

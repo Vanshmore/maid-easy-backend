@@ -4,7 +4,7 @@ const customerSchema = new mongoose.Schema({
   googleId: {
     type: String,
     required: true,
-    unique: true, // Unique Google ID for each user
+    unique: true,
   },
   fullName: {
     type: String,
@@ -14,45 +14,17 @@ const customerSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true, // Ensure email is unique for identification
+    unique: true,
     trim: true,
   },
-  location: {
+  area: { // Changed from location to area
     type: String,
-    default: null, // Automatically fetched after registration
+    default: null,
   },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
-
-// Token generation for authenticated user
-customerSchema.methods.generateAccessToken = function () {
-  return jwt.sign(
-    {
-      _id: this._id,
-      fullName: this.fullName,
-      email: this.email,
-      googleId: this.googleId, // Include Google ID in token for identification
-    },
-    process.env.ACCESS_TOKEN_SECRET,
-    {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
-    }
-  );
-};
-
-customerSchema.methods.generateRefreshToken = function () {
-  return jwt.sign(
-    {
-      _id: this._id,
-    },
-    process.env.REFRESH_TOKEN_SECRET,
-    {
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
-    }
-  );
-};
 
 export const Customer = mongoose.model("Customer", customerSchema);

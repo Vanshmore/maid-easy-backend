@@ -10,10 +10,9 @@ router.route("/register").post(registerUser);
 
 
 router.route("/register").post(registerUser);
-
+router.route('/:customerId/fetchLocation').post(fetchLocation);
 
 // Route for fetching user location after registration and OTP verification
-router.route("/:customerId/location").get(fetchLocation);
 
 router.route("/:customerId/home").get(getCustomerHome);
 

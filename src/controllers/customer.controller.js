@@ -19,21 +19,30 @@ export const registerUser = asyncHandler(async (req, res) => {
   res.status(201).json(new ApiResponse(201, 'User registered successfully', { customerId: customer._id }));
 });
 
-// Fetch User Location after registration (simulate location fetching for now)
+
+
+// Fetch Customer area after registration and update location
 export const fetchLocation = asyncHandler(async (req, res) => {
-  const { customerId } = req.params;
+  const { customerId } = req.params; // Get customerId from URL parameters
+  const { area } = req.body; // Get area from request body
 
   const customer = await Customer.findById(customerId);
   if (!customer) {
     throw new ApiError(404, 'User not found');
   }
 
-  // TODO: Implement actual location fetching (using a location service)
-  customer.location = "Sample Location"; // Simulate location for now
+  // Check if the area is provided
+  if (!area) {
+    throw new ApiError(400, 'Area must be provided');
+  }
+
+  // Update the customer's area
+  customer.area = area; // Store the area in the area field
   await customer.save();
 
-  res.status(200).json(new ApiResponse(200, 'Location fetched successfully', { location: customer.location }));
+  res.status(200).json(new ApiResponse(200, 'Location updated successfully', { area: customer.area }));
 });
+
 
 // Customer Home - Display services and highly-rated maids based on location
 export const getCustomerHome = asyncHandler(async (req, res) => {
@@ -46,7 +55,7 @@ export const getCustomerHome = asyncHandler(async (req, res) => {
   }
 
   // Ensure customer has a location before fetching services/maids
-  if (!customer.location) {
+  if (!customer.area) {
     throw new ApiError(400, 'Location not set for user');
   }
 
@@ -89,3 +98,7 @@ export const exploreServices = asyncHandler(async (req, res) => {
   // Return the services in the response
   res.status(200).json(new ApiResponse(200, 'Services fetched successfully', { services }));
 });
+
+
+
+

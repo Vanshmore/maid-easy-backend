@@ -4,7 +4,7 @@ const serviceSchema = new mongoose.Schema({
   id: {
     type: Number,
     required: true,
-    unique: true, // Ensures each service has a unique ID
+    unique: true, // Ensures each service has  unique ID
   },
   name: {
     type: String,
