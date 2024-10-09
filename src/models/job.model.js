@@ -11,14 +11,29 @@ const jobSchema = new mongoose.Schema({
     ref: 'Service',
     required: true,
   },
+  serviceType: {
+    type: String,
+    enum: ['One day', 'Monthly', 'Range'],
+    required: true,
+  },
+  date: {
+    type: Date,
+    required: function () {
+      return this.serviceType === 'One day';
+    },
+  },
   dates: {
     from: {
       type: Date,
-      required: true,
+      required: function () {
+        return this.serviceType === 'Range';
+      },
     },
     to: {
       type: Date,
-      required: true,
+      required: function () {
+        return this.serviceType === 'Range';
+      },
     },
   },
   time: {
